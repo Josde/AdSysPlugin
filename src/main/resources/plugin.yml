@@ -3,5 +3,9 @@ main: usal.adsys.AdSysPlugin.AdSysPlugin
 api-version: 1.16
 version: 1.0
 
+commands:
+  cowsay:
+    description: El comando Cowsay de Linux
+    usage: /<command>
 
 permissions: {}
