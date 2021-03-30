@@ -5,7 +5,14 @@ version: 1.0
 
 commands:
   cowsay:
-    description: El comando Cowsay de Linux
+    description: El comando Cowsay de Linux.
     usage: /<command>
+  clickstart:
+    description: Empieza un concurso de clicks.
+    usage: /<command>
+  clickjoin:
+    description: Auto-entra en un equipo de clicks.
+    usage: /<command>
+
 
 permissions: {}
