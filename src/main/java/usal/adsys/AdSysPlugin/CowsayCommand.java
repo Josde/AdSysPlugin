@@ -21,6 +21,6 @@ public class CowsayCommand implements CommandExecutor {
                 "                ||------w |\n" +
                 "                ||           ||\n";
         Bukkit.broadcastMessage(cowsay); // Enviamos el mensaje a todo el servidor.
-        return false;
+        return true;
     }
 }

@@ -19,7 +19,6 @@ public class InteractionListener implements Listener {
             Player sender = e.getPlayer();
             Score s = this.plugin.obj.getScore(sender.getName());
             s.setScore(s.getScore() + 1);
-            this.plugin.getLogger().info("Score de " + sender.getName() + " = " + s.getScore());
         }
     }
 }

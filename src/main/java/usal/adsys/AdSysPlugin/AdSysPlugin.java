@@ -3,10 +3,7 @@ package usal.adsys.AdSysPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.scoreboard.Team;
+import org.bukkit.scoreboard.*;
 
 public class AdSysPlugin extends JavaPlugin {
 
@@ -28,8 +25,12 @@ public class AdSysPlugin extends JavaPlugin {
         board = manager.getNewScoreboard();
         board.registerNewObjective("Clicks", "dummy");
         this.obj = board.getObjective("Clicks");
+        this.obj.setDisplayName("Clicks");
+        this.obj.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.equipos[0] = board.registerNewTeam(ChatColor.RED + "Equipo Rojo");
+        this.equipos[0].setPrefix(ChatColor.RED + "");
         this.equipos[1] = board.registerNewTeam(ChatColor.AQUA + "Equipo Azul");
+        this.equipos[0].setPrefix(ChatColor.AQUA + "");
         getLogger().info(String.format("-----------------------%n| ADSYS PLUGIN LOADED |%n-----------------------"));
 
     }
