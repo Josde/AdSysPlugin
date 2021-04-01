@@ -7,10 +7,10 @@ commands:
   cowsay:
     description: El comando Cowsay de Linux.
     usage: /<command>
-  clickstart:
+  start:
     description: Empieza un concurso de clicks.
     usage: /<command>
-  clickjoin:
+  join:
     description: Auto-entra en un equipo de clicks.
     usage: /<command>
 

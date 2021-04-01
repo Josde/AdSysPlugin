@@ -1,5 +1,6 @@
 package usal.adsys.AdSysPlugin;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,6 +19,7 @@ public class InteractionListener implements Listener {
             Player sender = e.getPlayer();
             Score s = this.plugin.obj.getScore(sender.getName());
             s.setScore(s.getScore() + 1);
+            this.plugin.getLogger().info("Score de " + sender.getName() + " = " + s.getScore());
         }
     }
 }

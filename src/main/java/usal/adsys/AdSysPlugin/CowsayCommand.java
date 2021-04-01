@@ -13,14 +13,14 @@ public class CowsayCommand implements CommandExecutor {
         String txt = String.join(" ", args); // El mensaje que haya enviado el usuario viene como argumentos separados, asi que lo juntamos.
         int len = txt.length();
         String cowsay = Utils.repeat("_", len + 2) +
-                                "\n< " + txt + " >\n"
+                                "\n< " + txt + " >\n" // Metemos el texto del usuario
                         + Utils.repeat("-", len + 2) +
                 "\n        \\   ^__^\n" +
                 "         \\  (oo)\\_______\n" +
                 "            (__)\\          )\\/\\\n" +
                 "                ||------w |\n" +
                 "                ||           ||\n";
-        Bukkit.broadcastMessage(cowsay);
+        Bukkit.broadcastMessage(cowsay); // Enviamos el mensaje a todo el servidor.
         return false;
     }
 }

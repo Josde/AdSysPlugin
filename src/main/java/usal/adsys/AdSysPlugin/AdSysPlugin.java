@@ -13,20 +13,23 @@ public class AdSysPlugin extends JavaPlugin {
     public Team[] equipos = new Team[2];
     public boolean isClickCountingEnabled = false;
     public Objective obj;
+    public Scoreboard board;
     @Override
     public void onEnable() {
         // TODO: Permisos para los plugins, para que no todos puedan hacer start.
         // Inicializamos los comandos con su ejecutor
         getCommand("cowsay").setExecutor(new CowsayCommand());
-        getCommand("clickstart").setExecutor(new ClickCounterCommand(this));
-        getCommand("clickjoin").setExecutor(new ClickCounterCommand(this));
+        getCommand("start").setExecutor(new ClickCounterCommand(this));
+        getCommand("join").setExecutor(new ClickCounterCommand(this));
+        getServer().getPluginManager().registerEvents(new InteractionListener(this), this);
+        getServer().getPluginManager().registerEvents(new ConnectionListener(), this);
         // Inicializamos un Scoreboard y dos equipos para el concurso de clicks.
         ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard board = manager.getNewScoreboard();
+        board = manager.getNewScoreboard();
         board.registerNewObjective("Clicks", "dummy");
         this.obj = board.getObjective("Clicks");
         this.equipos[0] = board.registerNewTeam(ChatColor.RED + "Equipo Rojo");
-        this.equipos[1] = board.registerNewTeam(ChatColor.BLUE + "Equipo Azul");
+        this.equipos[1] = board.registerNewTeam(ChatColor.AQUA + "Equipo Azul");
         getLogger().info(String.format("-----------------------%n| ADSYS PLUGIN LOADED |%n-----------------------"));
 
     }
