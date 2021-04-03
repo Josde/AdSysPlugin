@@ -3,6 +3,9 @@ package usal.adsys.AdSysPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Score;
 
 
@@ -40,16 +44,26 @@ public class ClickCounterCommand implements CommandExecutor {
                 public void run() {
                     timeLeft -= 10;
                     if (timeLeft <= 0) this.cancel();
-                    Bukkit.broadcastMessage(String.format("Quedan %s%d%s segundos.", ChatColor.BOLD.toString(), timeLeft, ChatColor.RESET.toString()));
+                    else Bukkit.broadcastMessage(String.format("Quedan %s%d%s segundos.", ChatColor.BOLD.toString(), timeLeft, ChatColor.RESET.toString()));
                 }
             }.runTaskTimer(this.plugin, 200L, 200L); // Hacemos que tras 10 segundos, se empiece a ejecutar periodicamente.
-            scheduler.scheduleSyncDelayedTask(this.plugin, new Runnable() {
+            // Añadimos la barra de jefes y el contador de puntuacion a todos los usuarios.
+            BossBar bb = Bukkit.createBossBar(ChatColor.AQUA + "<--- VENTAJA AZUL" + ChatColor.RESET + " | " + ChatColor.RED + "VENTAJA ROJA --->", BarColor.WHITE, BarStyle.SOLID);
+            bb.setProgress(0.5);
+            for (int i = 0; i < plugin.equipos.length; i++) {
+                for (String entry : plugin.equipos[i].getEntries()) {
+                    bb.addPlayer(Bukkit.getPlayer(entry));
+                    plugin.obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+                }
+            }
+            // Creamos un BukkitTask para actualizar la barra de jefes.
+            BukkitTask bossbarUpdater = new BukkitRunnable() {
+
                 @Override
                 public void run() {
-                    plugin.isClickCountingEnabled = false;
-                    Bukkit.broadcastMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "FIN DEL CONCURSO DE CLICKS");
                     int scores[] = {0, 0};
                     int maxScore = 0;
+                    double ventajaRoja, porcentajeBarra;
                     String mvp = new String();
                     // Obtenemos la puntuacion de cada jugador
                     for (String entry : plugin.board.getEntries()) {
@@ -60,8 +74,53 @@ public class ClickCounterCommand implements CommandExecutor {
                         } else if (plugin.board.getEntryTeam(entry).equals(plugin.equipos[1])) {
                             scores[1] += scoreActual;
                         }
+                    }
+
+                    if (plugin.equipos[1].getSize() > 0) {
+                        float factorCorreccion = plugin.equipos[0].getSize() / plugin.equipos[1].getSize();
+                        if (factorCorreccion < 1) scores[0] /= factorCorreccion;
+                        else if (factorCorreccion > 1) scores[1] *= factorCorreccion;
+                    }
+                    if (scores[0] == 0 || scores[1] == 0) {
+                        ventajaRoja = (scores[0] > scores[1])? Float.MAX_VALUE : 0;
+                    } else {
+                        ventajaRoja = (double)scores[0] / scores[1];
+                    }
+
+                    porcentajeBarra = (ventajaRoja / (ventajaRoja+1));
+                    bb.setProgress(porcentajeBarra);
+                    if (porcentajeBarra < 0.5) {
+                        bb.setColor(BarColor.BLUE);
+                    } else if (porcentajeBarra > 0.5) {
+                        bb.setColor(BarColor.RED);
+                    } else {
+                        bb.setColor(BarColor.WHITE);
+                    }
+                }
+            }.runTaskTimer(this.plugin, 0, 4);
+            scheduler.scheduleSyncDelayedTask(this.plugin, new Runnable() {
+                @Override
+                public void run() {
+                    plugin.isClickCountingEnabled = false;
+                    Bukkit.broadcastMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "FIN DEL CONCURSO DE CLICKS");
+                    int scores[] = {0, 0};
+                    int maxScore = 0;
+                    String mvp = new String();
+                    // Desactivamos la barra de progreso y la cuenta atras
+                    countdown.cancel();
+                    bossbarUpdater.cancel();
+                    bb.removeAll();
+                    // Obtenemos la puntuacion de cada jugador
+                    for (String entry : plugin.board.getEntries()) {
+                        int scoreActual = plugin.obj.getScore(entry).getScore();
+                        // Sumamos la puntuacion de cada jugador a la de su equipo correspondiente.
+                        if (plugin.board.getEntryTeam(entry).equals(plugin.equipos[0])) {
+                            scores[0] += scoreActual;
+                        } else if (plugin.board.getEntryTeam(entry).equals(plugin.equipos[1])) {
+                            scores[1] += scoreActual;
+                        }
                         // Evaluamos la puntuacion maxima, para el MVP.
-                        if (maxScore < scoreActual) {
+                        if (maxScore <= scoreActual) {
                             maxScore = scoreActual;
                             mvp = entry;
                         }
@@ -92,10 +151,10 @@ public class ClickCounterCommand implements CommandExecutor {
                     p.sendMessage("Ya estás dentro de un equipo.");
                     return true;
                 }
-                // Si no, le metemos en el equipo con menos miembros.
-                p.setScoreboard(plugin.board);
+                // Si no, le metemos en el equipo con menos miembros y le añadimos al scoreboard.
                 int teamIndex = (this.plugin.equipos[0].getSize() > this.plugin.equipos[1].getSize())? 1 : 0;
                 this.plugin.equipos[teamIndex].addEntry(sender.getName());
+                p.setScoreboard(plugin.board);
                 if (teamIndex == 0) {
                     Bukkit.broadcastMessage(sender.getName() + " se ha unido al equipo: " + ChatColor.RED + "ROJO");
                 } else {

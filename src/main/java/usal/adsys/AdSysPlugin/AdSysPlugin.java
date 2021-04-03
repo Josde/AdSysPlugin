@@ -2,6 +2,7 @@ package usal.adsys.AdSysPlugin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.*;
 
@@ -28,10 +29,10 @@ public class AdSysPlugin extends JavaPlugin {
         this.obj.setDisplayName("Clicks");
         this.obj.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.equipos[0] = board.registerNewTeam(ChatColor.RED + "Equipo Rojo");
-        this.equipos[0].setPrefix(ChatColor.RED + "");
+        this.equipos[0].setColor(ChatColor.RED);
         this.equipos[1] = board.registerNewTeam(ChatColor.AQUA + "Equipo Azul");
-        this.equipos[0].setPrefix(ChatColor.AQUA + "");
-        getLogger().info(String.format("-----------------------%n| ADSYS PLUGIN LOADED |%n-----------------------"));
+        this.equipos[1].setColor(ChatColor.AQUA);
+        getLogger().info(String.format("-----------------------| ADSYS PLUGIN LOADED |-----------------------"));
 
     }
     // Fired when plugin is disabled
