@@ -15,6 +15,10 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Team;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class ClickCounterCommand implements CommandExecutor {
@@ -97,7 +101,7 @@ public class ClickCounterCommand implements CommandExecutor {
                         bb.setColor(BarColor.WHITE);
                     }
                 }
-            }.runTaskTimer(this.plugin, 0, 4);
+            }.runTaskTimer(this.plugin, 0, 2);
             scheduler.scheduleSyncDelayedTask(this.plugin, new Runnable() {
                 @Override
                 public void run() {
@@ -160,6 +164,27 @@ public class ClickCounterCommand implements CommandExecutor {
                 } else {
                     Bukkit.broadcastMessage(sender.getName() + " se ha unido al equipo: " + ChatColor.AQUA + "AZUL");
                 }
+            }
+        } else if (command.getName().equals("shuffle")) {
+            ArrayList<String> entriesJugadores = new ArrayList<>();
+            int teamIndex = 0;
+            for (Team t : this.plugin.equipos) {
+                for (String e : t.getEntries()) {
+                    entriesJugadores.add(e);
+                    t.removeEntry(e);
+                }
+            }
+            Collections.shuffle(entriesJugadores);
+            while (entriesJugadores.size() > 0) {
+                String entry = entriesJugadores.remove(0);
+                Bukkit.broadcastMessage(ChatColor.BOLD + "Aleatorizando los equipos...");
+                this.plugin.equipos[teamIndex].addEntry(entry);
+                if (teamIndex == 0) {
+                    Bukkit.broadcastMessage(entry + " se ha unido al equipo: " + ChatColor.RED + "ROJO");
+                } else {
+                    Bukkit.broadcastMessage(entry + " se ha unido al equipo: " + ChatColor.AQUA + "AZUL");
+                }
+                teamIndex = (teamIndex == 1)? 0  : 1;
             }
         }
         return true;

@@ -16,9 +16,11 @@ public class AdSysPlugin extends JavaPlugin {
     public void onEnable() {
         // TODO: Permisos para los plugins, para que no todos puedan hacer start.
         // Inicializamos los comandos con su ejecutor
+        ClickCounterCommand ccc = new ClickCounterCommand(this);
         getCommand("cowsay").setExecutor(new CowsayCommand());
-        getCommand("start").setExecutor(new ClickCounterCommand(this));
-        getCommand("join").setExecutor(new ClickCounterCommand(this));
+        getCommand("start").setExecutor(ccc);
+        getCommand("join").setExecutor(ccc);
+        getCommand("shuffle").setExecutor(ccc);
         getServer().getPluginManager().registerEvents(new InteractionListener(this), this);
         getServer().getPluginManager().registerEvents(new ConnectionListener(), this);
         // Inicializamos un Scoreboard y dos equipos para el concurso de clicks.
