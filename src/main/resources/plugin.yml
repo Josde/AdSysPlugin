@@ -13,6 +13,8 @@ commands:
   join:
     description: Auto-entra en un equipo de clicks.
     usage: /<command>
-
+  shuffle:
+    description: Baraja los equipos.
+    usage: /<command>
 #TODO: PERMISOS
 permissions: {}
